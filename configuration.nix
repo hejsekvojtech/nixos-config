@@ -43,10 +43,11 @@
 
   # KDE Plasma supremacy
   services.desktopManager.plasma6.enable = true;
-
+  
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
+    theme = "breeze";
   };
 
   # Configure keymap in X11
@@ -121,11 +122,6 @@
     kdePackages.xdg-desktop-portal-kde
     vlc
     git
-    ibm-plex
-    inter
-    fira
-    roboto
-    noto-fonts
     solaar
     android-tools
     android-udev-rules
@@ -135,30 +131,30 @@
     gnumake
     awscli2
     xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-gnome
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
     kate
     kwalletmanager
+    xwaylandvideobridge
+    plasma-browser-integration
   ];
-
-  qt = {
-    enable = true;
-    platformTheme = "kde6";
-    style = "breeze";
-  };
+  
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-emoji
+    fira
+    ibm-plex
+    inter
+    roboto
+  ];
 
   services.flatpak.enable = true;
   services.envfs.enable = true;
-
-  systemd.services.flatpak-repo = {
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-    '';
-  };
 
   networking.firewall.enable = true;
   networking.hostName = "seth";
@@ -167,10 +163,17 @@
   '';
 
   xdg.portal = {
-    xdgOpenUsePortal = true;
     enable = true;
+    config = {
+        kde.default = [ "kde" "gtk" "gnome" ];
+        kde."org.freedesktop.portal.FileChooser" = [ "kde" ];
+        kde."org.freedesktop.portal.OpenURI" = [ "kde" ];
+    };
+
     extraPortals = [
       pkgs.kdePackages.xdg-desktop-portal-kde
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-gnome
     ];
   };
  
