@@ -9,7 +9,7 @@ update: clean-local
 
 restore: clean-etc
 	@echo "Restoring /etc/nixos from repo *.nix files..."
-	cp $(DST_DIR)/*.nix $(SRC_DIR)/
+	sudo cp $(DST_DIR)/*.nix $(SRC_DIR)/
 
 diff:
 	@echo "Showing diffs..."
@@ -21,10 +21,10 @@ commit:
 
 backup:
 	@mkdir -p backups/$(shell date +%F)
-	cp $(SRC_DIR)/*.nix backups/$(shell date +%F)/
+	sudo cp $(SRC_DIR)/*.nix backups/$(shell date +%F)/
 
 clean-local:
 	rm -f $(DST_DIR)/*.nix
 
 clean-etc:
-	rm -f $(SRC_DIR)/*.nix
+	sudo rm -f $(SRC_DIR)/*.nix

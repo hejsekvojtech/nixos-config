@@ -88,6 +88,7 @@
       qbittorrent
       nextcloud-client
       jetbrains-toolbox
+      libreoffice-qt6-fresh
     ];
   };
 
@@ -130,10 +131,9 @@
     mkcert
     gnumake
     awscli2
+    lsb-release
     xdg-desktop-portal
     xdg-desktop-portal-gtk
-    xdg-desktop-portal-gnome
-    lsb-release
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
@@ -164,21 +164,10 @@
   '';
 
   xdg.portal = {
+    xdgOpenUsePortal = true;
     enable = true;
-    config = {
-        kde.default = [ "kde" "gtk" "gnome" ];
-        kde."org.freedesktop.portal.FileChooser" = [ "kde" ];
-        kde."org.freedesktop.portal.OpenURI" = [ "kde" ];
-    };
-
-    extraPortals = [
-      pkgs.kdePackages.xdg-desktop-portal-kde
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-gnome
-    ];
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
-
-  environment.sessionVariables.GTK_USE_PORTAL = "1";
  
   system.stateVersion = "25.05"; # Did you read the comment?
 }
