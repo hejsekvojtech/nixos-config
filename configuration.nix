@@ -42,8 +42,13 @@
   services.xserver.enable = false;
 
   # KDE Plasma supremacy
-  services.desktopManager.plasma6.enable = true;
-  
+  services = {
+    desktopManager.plasma6 = {
+      enable = true;
+      enableQt5Integration = true;
+    };
+  };
+
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
@@ -134,6 +139,7 @@
     lsb-release
     xdg-desktop-portal
     xdg-desktop-portal-gtk
+    networkmanager-openvpn
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
@@ -162,6 +168,7 @@
   networking.extraHosts = 
   ''
   '';
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
 
   xdg.portal = {
     xdgOpenUsePortal = true;
