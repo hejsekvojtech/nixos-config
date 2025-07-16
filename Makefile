@@ -13,7 +13,10 @@ restore: clean-etc
 
 diff:
 	@echo "Showing diffs..."
-	@diff -u $(DST_DIR)/*.nix $(SRC_DIR)/*.nix || true
+	@for f in $(DST_DIR)/*.nix; do \
+		base=$$(basename $$f); \
+		diff -uN $$f $(SRC_DIR)/$$base || true; \
+	done
 
 commit:
 	@git add *.nix
@@ -21,7 +24,7 @@ commit:
 
 backup:
 	@mkdir -p backups/$(shell date +%F)
-	sudo cp $(SRC_DIR)/*.nix backups/$(shell date +%F)/
+	cp $(SRC_DIR)/*.nix backups/$(shell date +%F)/
 
 clean-local:
 	rm -f $(DST_DIR)/*.nix

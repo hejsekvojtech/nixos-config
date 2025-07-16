@@ -162,13 +162,16 @@
 
   services.flatpak.enable = true;
   services.envfs.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
 
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.firewall.enable = true;
   networking.hostName = "seth";
   networking.extraHosts = 
   ''
   '';
-  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
 
   xdg.portal = {
     xdgOpenUsePortal = true;
