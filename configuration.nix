@@ -12,6 +12,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.extraModprobeConfig = "options kvm_amd nested=1";
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -82,7 +83,7 @@
   users.users.vojtech = {
     isNormalUser = true;
     description = "Vojtech";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "libvirtd" "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
       thunderbird
       vscode
@@ -140,6 +141,7 @@
     xdg-desktop-portal
     xdg-desktop-portal-gtk
     networkmanager-openvpn
+    virt-manager
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
@@ -165,10 +167,10 @@
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.sddm.enableGnomeKeyring = true;
 
-  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.firewall.enable = true;
   networking.hostName = "seth";
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.extraHosts = 
   ''
   '';
@@ -177,6 +179,22 @@
     xdgOpenUsePortal = true;
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
+  };
+
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+      ovmf = {
+        enable = true;
+        packages = [(pkgs.OVMF.override {
+          secureBoot = true;
+          tpmSupport = true;
+        }).fd];
+      };
+    };
   };
  
   system.stateVersion = "25.05"; # Did you read the comment?
