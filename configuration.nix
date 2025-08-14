@@ -12,7 +12,8 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.extraModprobeConfig = "options kvm_amd nested=1";
+  boot.extraModprobeConfig = "options kvm_amd nested=1 snd_hda_intel power_save=0";
+  boot.blacklistedKernelModules = [ "appletalk" "atm" "ax25" "batman-adv" "floppy" "l2tp_eth" "l2tp_ip" "l2tp_netlink" "l2tp_ppp" "netrom" "nfc" "rds" "rose" "sctp" "snd_pcsp" ];
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -83,7 +84,7 @@
   users.users.vojtech = {
     isNormalUser = true;
     description = "Vojtech";
-    extraGroups = [ "libvirtd" "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "libvirtd" "networkmanager" "wheel" "docker" "dialout" ];
     packages = with pkgs; [
       thunderbird
       vscode
@@ -127,9 +128,9 @@
     kdePackages.breeze
     kdePackages.breeze-gtk
     kdePackages.xdg-desktop-portal-kde
+    kdePackages.powerdevil
     vlc
     git
-    solaar
     android-tools
     android-udev-rules
     pnpm
@@ -142,7 +143,11 @@
     xdg-desktop-portal-gtk
     networkmanager-openvpn
     virt-manager
+    imagemagick
+    minicom
+    solaar
   ];
+
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
@@ -169,11 +174,12 @@
 
   networking.firewall.enable = true;
   networking.hostName = "seth";
-  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.extraHosts = 
   ''
   '';
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
+
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
   xdg.portal = {
     xdgOpenUsePortal = true;
@@ -182,20 +188,20 @@
   };
 
   virtualisation.libvirtd = {
-    enable = true;
-    qemu = {
-      package = pkgs.qemu_kvm;
-      runAsRoot = true;
-      swtpm.enable = true;
-      ovmf = {
-        enable = true;
-        packages = [(pkgs.OVMF.override {
-          secureBoot = true;
-          tpmSupport = true;
-        }).fd];
-      };
+  enable = true;
+  qemu = {
+    package = pkgs.qemu_kvm;
+    runAsRoot = true;
+    swtpm.enable = true;
+    ovmf = {
+      enable = true;
+      packages = [(pkgs.OVMF.override {
+        secureBoot = true;
+        tpmSupport = true;
+      }).fd];
     };
   };
+};
  
   system.stateVersion = "25.05"; # Did you read the comment?
 }
